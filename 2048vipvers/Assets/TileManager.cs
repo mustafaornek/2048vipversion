@@ -21,7 +21,7 @@ public class TileManager : MonoBehaviour
         TrySpawnTile();
 
         
-        UpdateTilePositions();
+        UpdateTilePositions(true);
     }
 
     // Update is called once per frame
@@ -87,12 +87,12 @@ private bool TrySpawnTile(){
             return 4;
     }
 
-private void UpdateTilePositions()
+private void UpdateTilePositions(bool instant)
 {
     for (int x=0; x< GridSize; x++)
     for (int y=0; y< GridSize; y++)
         if(_tiles[x,y] != null)
-            _tiles[x,y].transform.position = _tilePositions[x,y].position;
+            _tiles[x,y].SetPosition(_tilePositions[x,y].position, instant);
 }
 
 private void TryMove(int x, int y)
@@ -121,7 +121,7 @@ private void TryMove(int x, int y)
             TryMoveRight();
     }
 
-    UpdateTilePositions();
+    UpdateTilePositions(false);
 }
 
 private void TryMoveRight()
