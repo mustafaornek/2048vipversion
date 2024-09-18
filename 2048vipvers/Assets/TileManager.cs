@@ -12,7 +12,13 @@ public class TileManager : MonoBehaviour
     private readonly Transform[,] _tilePositions = new Transform[GridSize, GridSize];
 
     private readonly Tile[,] _tiles = new Tile[GridSize, GridSize];
-    [SerializeField]private Tile tilePrefab;
+    [SerializeField] private Tile tilePrefab;
+
+    private bool _isAnimating;
+
+    [SerializeField] private TileSettings tileSettings;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -89,12 +95,26 @@ private bool TrySpawnTile(){
 
 private void UpdateTilePositions(bool instant)
 {
+    if(!instant)
+    {
+        _isAnimating = true;
+        StartCoroutine(WaitForTileAnimation());
+    }
+
+    
+
     for (int x=0; x< GridSize; x++)
     for (int y=0; y< GridSize; y++)
         if(_tiles[x,y] != null)
             _tiles[x,y].SetPosition(_tilePositions[x,y].position, instant);
 }
 
+private IEnumerator WaitForTileAnimation(){
+        yield return new WaitForSeconds(tileSettings.AnimationTime);
+        _isAnimating = false;
+    }
+
+    private bool _tilesUpdated;
 private void TryMove(int x, int y)
 {
     if(x == 0 && y ==0 )
@@ -106,6 +126,7 @@ private void TryMove(int x, int y)
         return;
     }
 
+    _tilesUpdated = false;
     if (x == 0)
     {
         if(y>0)
@@ -120,7 +141,7 @@ private void TryMove(int x, int y)
             else
             TryMoveRight();
     }
-
+    if(_tilesUpdated)
     UpdateTilePositions(false);
 }
 
@@ -135,6 +156,7 @@ private void TryMoveRight()
         {
             if (_tiles[x2, y] != null) continue;
 
+            _tilesUpdated = true; 
             _tiles[x2,y] = _tiles[x,y];
             _tiles[x,y] = null;
             break;

@@ -16,8 +16,7 @@ public class Tile : MonoBehaviour
 
    private float _count;
 
-   [SerializeField] private float animationTime = .3f;
-   [SerializeField] private AnimationCurve animationCurve;
+   [SerializeField] private TileSettings tileSettings;
 
    public void SetValue(int value){
         _value = value;
@@ -32,14 +31,14 @@ public class Tile : MonoBehaviour
          return;
       _count += Time.deltaTime;
 
-      float t = _count / animationTime;
-      t = animationCurve.Evaluate(t);
+      float t = _count / tileSettings.AnimationTime;
+      t = tileSettings.AnimationCurve.Evaluate(t);
 
       Vector3 newPos = Vector3.Lerp(_startPos, _endPos, t);
 
       transform.position = newPos;
 
-      if(_count >= animationTime)
+      if(_count >= tileSettings.AnimationTime)
          _isAnimating = false;
 
    }
